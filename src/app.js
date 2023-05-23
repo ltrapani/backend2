@@ -11,12 +11,9 @@ import cartsRouter from "./routes/api/carts.router.js";
 import usersRouter from "./routes/api/users.router.js";
 import initializePassport from "./config/passport.config.js";
 import passport from "passport";
-
-import Messages from "./dao/dbManagers/messages.js";
-const messagesManager = new Messages();
+import { chat } from "./chat/chat.js";
 
 const app = express();
-
 app.use(express.static(`${__dirname}/public`));
 
 app.engine("handlebars", handlebars.engine());
@@ -36,23 +33,6 @@ app.use("/api/users", usersRouter);
 app.use("/", viewsRouter);
 
 const server = app.listen(8080, () => console.log("Listening on port 8080"));
-const io = new Server(server);
+export const io = new Server(server);
 
-io.on("connection", (socket) => {
-  console.log(`Nuevo cliente conectado. ID: ${socket.id}`);
-
-  socket.on("message", async ({ user, message }) => {
-    await messagesManager.addMessage(user, message);
-    const messages = await messagesManager.getAll();
-
-    io.emit("messageLogs", messages);
-  });
-
-  socket.on("authenticated", async (user) => {
-    const messages = await messagesManager.getAll();
-    socket.emit("messageLogs", messages);
-    socket.broadcast.emit("newUserConnected", user);
-  });
-});
-
-export { io };
+io.on("connection", (socket) => chat(socket));

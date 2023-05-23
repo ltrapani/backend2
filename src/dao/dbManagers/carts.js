@@ -17,7 +17,8 @@ export default class Carts {
   addProduct = async (cid, cart) =>
     await cartModel.updateOne({ _id: cid }, cart);
 
-  update = async (cid, cart) => await cartModel.updateOne({ _id: cid }, cart);
+  updateCart = async (cid, cart) =>
+    await cartModel.updateOne({ _id: cid }, cart);
 
   deleteProduct = async (cid, pid) =>
     await cartModel.updateOne(

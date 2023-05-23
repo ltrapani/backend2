@@ -12,4 +12,6 @@ export default class Users {
   findByEmail = async (email) => await userModel.findOne({ email });
 
   update = async (email, user) => await userModel.updateOne({ email }, user);
+
+  delete = async (uid) => await userModel.deleteOne({ _id: uid });
 }

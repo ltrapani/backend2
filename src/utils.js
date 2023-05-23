@@ -4,7 +4,9 @@ import fs from "fs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import passport from "passport";
+import nodemailer from "nodemailer";
 import config from "./config/config.js";
+import UsersDto from "./dao/DTOs/users.dto.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -24,9 +26,19 @@ export const passportCall = (strategy) => {
           .send({ error: info.messages ? info.messages : info.toString() });
       }
 
-      req.user = user;
+      req.user = new UsersDto(user);
       next();
     })(req, res, next);
+  };
+};
+
+export const authorization = (role) => {
+  return async (req, res, next) => {
+    if (req.user.role !== role)
+      return res
+        .status(403)
+        .send({ status: "error", message: "You don't have permissions" });
+    next();
   };
 };
 
@@ -35,6 +47,15 @@ export const createHash = (password) =>
 
 export const validatePassword = (user, password) =>
   bcrypt.compareSync(password, user.password);
+
+export const transporter = nodemailer.createTransport({
+  service: "gmail",
+  port: 587,
+  auth: {
+    user: config.gmail_user,
+    pass: config.gmail_pass,
+  },
+});
 
 // fileSystem
 const generateId = (array) => {

@@ -22,8 +22,20 @@
               </tr>
             {{/each}}
           </tbody>
+          <tfoot>
+            {{#if products}}
+              <button
+                onclick="(()=> ckeckout('{{_id}}'))()"
+                class="btn btn-success"
+              >
+                Checkout
+              </button>
+            {{/if}}
+          </tfoot>
         </table>
       </div>
     </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/cart.js"></script>

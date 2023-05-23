@@ -7,6 +7,7 @@ import {
 } from "../../services/products.service.js";
 import { isInvalidId } from "../../lib/validators/validator.js";
 import { getCart } from "../../services/carts.service.js";
+import { authorization, passportCall } from "../../utils.js";
 
 const router = Router();
 
@@ -34,7 +35,8 @@ router.get(
 
 router.get(
   "/chat",
-  passport.authenticate("jwt", { session: false }),
+  passportCall("jwt"),
+  authorization("user"),
   async (req, res) => {
     res.render("chat", { user: req.user });
   }

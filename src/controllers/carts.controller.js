@@ -7,6 +7,7 @@ import {
   updateQuantity as updateQuantityService,
   deleteProduct as deleteProductService,
   deleteAllProducts as deleteAllProductsService,
+  purchase as purchaseService,
 } from "../services/carts.service.js";
 
 import { getProduct as getProductService } from "../services/products.service.js";
@@ -176,6 +177,45 @@ const deleteAllProducts = async (req, res) => {
   }
 };
 
+const purchase = async (req, res) => {
+  try {
+    const { cid } = req.params;
+    if (isInvalidId(cid))
+      return res.status(400).send({ status: "error", message: "Invalid id" });
+
+    const cart = await getCartService(cid);
+    if (!cart)
+      return res
+        .status(404)
+        .send({ status: "error", message: "cart not found" });
+
+    const result = await purchaseService(cart, req.user.email);
+    if (result.products.length === 0)
+      return res.send({
+        status: "success",
+        message: `Purchase success. We send you an email`,
+        result,
+      });
+
+    if (result?.ticket) {
+      return res.send({
+        status: "success",
+        message: `Purchase success. We send you an email. There is not enough stock of some products. Which were left in the cart. `,
+        result,
+      });
+    }
+
+    res.send({
+      status: "error",
+      message: `There is not enough stock of products. Which were left in the cart`,
+      result,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error });
+  }
+};
+
 export {
   createCart,
   getCart,
@@ -184,4 +224,5 @@ export {
   updateQuantity,
   deleteProduct,
   deleteAllProducts,
+  purchase,
 };

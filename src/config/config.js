@@ -5,6 +5,11 @@ dotenv.config();
 export default {
   mongoUrl: process.env.MONGO_URL,
   private_key: process.env.PRIVATE_KEY,
+  client_id: process.env.CLIENT_ID,
+  client_secret: process.env.CLIENT_SECRET,
+  callback_url: process.env.CALLBACK_URL,
   admin_email: process.env.ADMIN_EMAIL,
   admin_password: process.env.ADMIN_PASSWORD,
+  gmail_user: process.env.GMAIL_USER,
+  gmail_pass: process.env.GMAIL_PASS,
 };

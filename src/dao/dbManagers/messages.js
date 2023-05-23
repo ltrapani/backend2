@@ -5,21 +5,18 @@ export default class Messages {
     console.log("Working messages with DB in mongoDB");
   }
 
-  getAll = async () => {
-    try {
-      const messages = await messageModel.find();
-      return messages.map((message) => message.toObject());
-    } catch (error) {
-      console.log(error);
-    }
+  getMessages = async () => {
+    const messages = await messageModel.find();
+    return messages.map((message) => message.toObject());
   };
 
-  addMessage = async (user, message) => {
-    try {
-      const result = await messageModel.create({ user, message });
-      return result;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  getMessage = async (id) => await messageModel.findOne({ _id: id });
+
+  addMessage = async (user, message) =>
+    await messageModel.create({ user, message });
+
+  updateMessage = async (mid, message) =>
+    messageModel.updateOne({ _id: mid }, message);
+
+  deleteMessage = async (mid) => messageModel.deleteOne({ _id: mid });
 }

@@ -6,6 +6,7 @@ import {
   getProductsPaginate,
   updateProduct,
 } from "../../controllers/products.controller.js";
+import { authorization, passportCall } from "../../utils.js";
 
 const router = Router();
 
@@ -13,10 +14,15 @@ router.get("/", getProductsPaginate);
 
 router.get("/:pid", getProduct);
 
-router.post("/", addProduct);
+router.post("/", passportCall("jwt"), authorization("admin"), addProduct);
 
-router.put("/:pid", updateProduct);
+router.put("/:pid", passportCall("jwt"), authorization("admin"), updateProduct);
 
-router.delete("/:pid", deleteProduct);
+router.delete(
+  "/:pid",
+  passportCall("jwt"),
+  authorization("admin"),
+  deleteProduct
+);
 
 export default router;
