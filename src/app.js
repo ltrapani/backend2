@@ -1,4 +1,5 @@
 import express from "express";
+import errorHandler from "./middleware/errors/index.js";
 import "./dao/dbManagers/dbConfig.js";
 
 import cookieParser from "cookie-parser";
@@ -14,6 +15,7 @@ import passport from "passport";
 import { chat } from "./chat/chat.js";
 
 const app = express();
+
 app.use(express.static(`${__dirname}/public`));
 
 app.engine("handlebars", handlebars.engine());
@@ -31,6 +33,8 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
 app.use("/", viewsRouter);
+
+app.use(errorHandler);
 
 const server = app.listen(8080, () => console.log("Listening on port 8080"));
 export const io = new Server(server);

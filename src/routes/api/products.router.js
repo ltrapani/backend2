@@ -5,12 +5,15 @@ import {
   getProduct,
   getProductsPaginate,
   updateProduct,
+  getMockingProducts,
 } from "../../controllers/products.controller.js";
 import { authorization, passportCall } from "../../utils.js";
 
 const router = Router();
 
 router.get("/", getProductsPaginate);
+
+router.get("/mocking-products", getMockingProducts);
 
 router.get("/:pid", getProduct);
 

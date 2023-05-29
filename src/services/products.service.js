@@ -1,6 +1,7 @@
 import { productsManager } from "../dao/index.js";
 import { io } from "../app.js";
 import ProductsRepository from "../repository/products.repository.js";
+import { generateProduct } from "../mocking/products.mock.js";
 
 const productRepository = new ProductsRepository(productsManager);
 
@@ -61,6 +62,14 @@ const deleteProduct = async (pid) => {
   return response;
 };
 
+const getMockingProducts = async (quantity) => {
+  const mockingProducts = [];
+  for (let i = 0; i < quantity; i++) {
+    mockingProducts.push(generateProduct());
+  }
+  return mockingProducts;
+};
+
 export {
   getProductsPaginate,
   getAll,
@@ -69,4 +78,5 @@ export {
   addProduct,
   updateProduct,
   deleteProduct,
+  getMockingProducts,
 };

@@ -9,6 +9,12 @@ import {
   deleteAllProducts as deleteAllProductsService,
   purchase as purchaseService,
 } from "../services/carts.service.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import {
+  invalidIdErrorInfo,
+  notFoundErrorInfo,
+} from "../services/errors/info.js";
 
 import { getProduct as getProductService } from "../services/products.service.js";
 
@@ -42,30 +48,40 @@ const getCart = async (req, res) => {
   }
 };
 
-const addProduct = async (req, res) => {
+const addProduct = async (req, res, next) => {
   try {
     const { cid, pid } = req.params;
-    if (isInvalidId(cid, pid))
-      return res.status(400).send({ status: "error", message: "Invalid id" });
+    if (isInvalidId(cid, pid)) {
+      const err = CustomError.createError({
+        message: invalidIdErrorInfo(),
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+      throw err;
+    }
 
     const cart = await getCartService(cid);
-    if (!cart)
-      return res
-        .status(404)
-        .send({ status: "error", message: "cart not found" });
+    if (!cart) {
+      const err = CustomError.createError({
+        message: notFoundErrorInfo("cart"),
+        code: EErrors.NOT_FOUND,
+      });
+      throw err;
+    }
 
     const product = await getProductService(pid);
-    if (!product)
-      return res
-        .status(404)
-        .send({ status: "error", message: "product not found" });
+    if (!product) {
+      const err = CustomError.createError({
+        message: notFoundErrorInfo("product"),
+        code: EErrors.NOT_FOUND,
+      });
+      throw err;
+    }
 
     const response = await addProductService(cart, product);
 
     res.send({ status: "success", message: "Product added.", response });
   } catch (error) {
-    console.log(error);
-    res.status(500).send({ error });
+    next(error);
   }
 };
 
