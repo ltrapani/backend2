@@ -1,8 +1,9 @@
+import logger from "../../logger/logger.js";
 import { ticketModel } from "./models/Tickets.js";
 
 export default class Tickets {
   constructor() {
-    console.log("Working tickets with DB in mongoDB");
+    logger.info("Working tickets with DB in mongoDB");
   }
 
   create = async (ticket) => await ticketModel.create(ticket);

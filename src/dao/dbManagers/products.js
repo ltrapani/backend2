@@ -1,8 +1,9 @@
+import logger from "../../logger/logger.js";
 import { productModel } from "./models/products.js";
 
 export default class Products {
   constructor() {
-    console.log("Working products with DB in mongoDB");
+    logger.info("Working products with DB in mongoDB");
   }
 
   getProductsPaginate = async (limit, page, query, sort) =>

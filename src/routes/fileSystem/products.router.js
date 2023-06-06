@@ -1,7 +1,8 @@
 import { Router } from "express";
 import ProductService from "../../dao/fileManagers/ProductService.js";
-import { getAbsolutePath } from "../../utils.js";
+import { getAbsolutePath } from "../../utils/utilsFileSystem.js";
 import { io } from "../../app.js";
+import logger from "../../logger/logger.js";
 
 const router = Router();
 
@@ -28,7 +29,7 @@ router.get("/", async (req, res) => {
 
     if (limit > 0) return res.send(products.slice(0, limit));
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 });
 
@@ -44,7 +45,7 @@ router.get("/:pid", async (req, res) => {
       .status(404)
       .send({ status: "error", Error: "El producto no existe!!!" });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 });
 
@@ -62,7 +63,7 @@ router.post("/", async (req, res) => {
 
     res.send({ status: "success", message: "Product added" });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 });
 
@@ -79,7 +80,7 @@ router.put("/:pid", async (req, res) => {
           message: response.error,
         });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 });
 
@@ -98,7 +99,7 @@ router.delete("/:pid", async (req, res) => {
       message: response.error,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 });
 

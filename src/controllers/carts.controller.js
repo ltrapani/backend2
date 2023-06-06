@@ -1,4 +1,5 @@
 import { incompleteValues, isInvalidId } from "../lib/validators/validator.js";
+import logger from "../logger/logger.js";
 import {
   createCart as createCartService,
   getCart as getCartService,
@@ -24,7 +25,7 @@ const createCart = async (req, res) => {
 
     res.send({ status: "success", message: "Cart created", response });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send({ error });
   }
 };
@@ -43,7 +44,7 @@ const getCart = async (req, res) => {
 
     res.send({ status: "success", cart });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send({ error });
   }
 };
@@ -81,6 +82,7 @@ const addProduct = async (req, res, next) => {
 
     res.send({ status: "success", message: "Product added.", response });
   } catch (error) {
+    logger.error(error);
     next(error);
   }
 };
@@ -103,7 +105,7 @@ const updateCart = async (req, res) => {
 
     res.send({ status: "success", message: "Cart updated", response });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send({ error });
   }
 };
@@ -136,7 +138,7 @@ const updateQuantity = async (req, res) => {
 
     res.send({ status: "success", message: "Cart updated", response });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send({ error });
   }
 };
@@ -163,7 +165,7 @@ const deleteProduct = async (req, res) => {
 
     res.send({ status: "success", message: "Product was deleted.", response });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send({ error });
   }
 };
@@ -188,7 +190,7 @@ const deleteAllProducts = async (req, res) => {
       response,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send({ error });
   }
 };
@@ -227,7 +229,7 @@ const purchase = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send({ error });
   }
 };

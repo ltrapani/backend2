@@ -1,4 +1,5 @@
 import { incompleteValues } from "../lib/validators/validator.js";
+import logger from "../logger/logger.js";
 import {
   getUserByEmail as getUserByEmailService,
   register as registerService,
@@ -33,7 +34,7 @@ const register = async (req, res) => {
 
     res.send({ status: "success", message: "user registered" });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send(error);
   }
 };
@@ -69,7 +70,7 @@ const login = async (req, res) => {
       })
       .send({ status: "success", message: "login success" });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send(error);
   }
 };
@@ -94,7 +95,7 @@ const githubCallback = async (req, res) => {
       })
       .redirect("/products");
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send(error);
   }
 };

@@ -1,4 +1,5 @@
 import { incompleteValues, isInvalidId } from "../lib/validators/validator.js";
+import logger from "../logger/logger.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
 import {
@@ -24,7 +25,7 @@ const getProductsPaginate = async (req, res) => {
 
     res.send(response);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send(error);
   }
 };
@@ -43,7 +44,7 @@ const getProduct = async (req, res) => {
 
     res.send({ status: "success", product });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send(error);
   }
 };
@@ -80,6 +81,7 @@ const addProduct = async (req, res, next) => {
 
     res.send({ status: "success", message: "Product added", response });
   } catch (error) {
+    logger.error(error);
     next(error);
   }
 };
@@ -101,7 +103,7 @@ const updateProduct = async (req, res) => {
 
     res.send({ status: "success", message: "Product update", response });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send(error);
   }
 };
@@ -122,7 +124,7 @@ const deleteProduct = async (req, res) => {
 
     res.send({ status: "success", message: "Product delete", response });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     res.status(500).send(error);
   }
 };

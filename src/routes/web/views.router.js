@@ -8,6 +8,7 @@ import {
 import { isInvalidId } from "../../lib/validators/validator.js";
 import { getCart } from "../../services/carts.service.js";
 import { authorization, passportCall } from "../../utils.js";
+import logger from "../../logger/logger.js";
 
 const router = Router();
 
@@ -27,7 +28,7 @@ router.get(
       const products = await getAllService();
       res.render("realTimeProducts", { products, user: req.user });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(500).send(error);
     }
   }
@@ -58,7 +59,7 @@ router.get(
 
       res.render("products", { response, user: req.user });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(500).send(error);
     }
   }
@@ -81,7 +82,7 @@ router.get(
 
       res.render("productDetail", { ...product._doc, user: req.user });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(500).send(error);
     }
   }
@@ -104,7 +105,7 @@ router.get(
 
       res.render("cart", { ...cart, user: req.user });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(500).send(error);
     }
   }

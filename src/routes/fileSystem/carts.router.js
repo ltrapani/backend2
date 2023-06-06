@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { getAbsolutePath } from "../../utils.js";
+import { getAbsolutePath } from "../../utils/utilsFileSystem.js";
 import ProductService from "../../dao/fileManagers/ProductService.js";
 import CartService from "../../dao/fileManagers/CartService.js";
+import logger from "../../logger/logger.js";
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router.post("/", async (req, res) => {
       ? res.send({ status: "success", message: "cart created" })
       : res.status(400).send({ status: "error", message: response.error });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 });
 
@@ -52,7 +53,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
       ? res.send({ status: "success", message: "Product added." })
       : res.status(400).send({ status: "error", message: response.error });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 });
 

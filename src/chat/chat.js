@@ -1,8 +1,9 @@
 import { io } from "../app.js";
+import logger from "../logger/logger.js";
 import * as messagesService from "../services/messages.service.js";
 
 export const chat = async (socket) => {
-  console.log(`Nuevo cliente conectado. ID: ${socket.id}`);
+  logger.info(`Nuevo cliente conectado. ID: ${socket.id}`);
 
   socket.on("message", async ({ user, message }) => {
     await messagesService.addMessage(user, message);

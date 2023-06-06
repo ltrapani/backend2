@@ -1,8 +1,9 @@
+import logger from "../../logger/logger.js";
 import { cartModel } from "./models/carts.js";
 
 export default class Carts {
   constructor() {
-    console.log("Working carts with DB in mongoDB");
+    logger.info("Working carts with DB in mongoDB");
   }
 
   createCart = async () => await cartModel.create({});

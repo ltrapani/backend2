@@ -10,9 +10,12 @@ import viewsRouter from "./routes/web/views.router.js";
 import productsRouter from "./routes/api/products.router.js";
 import cartsRouter from "./routes/api/carts.router.js";
 import usersRouter from "./routes/api/users.router.js";
+import loggerTest from "./routes/api/loggerTest.router.js";
 import initializePassport from "./config/passport.config.js";
 import passport from "passport";
 import { chat } from "./chat/chat.js";
+import logger from "./logger/logger.js";
+import config from "./config/config.js";
 
 const app = express();
 
@@ -32,11 +35,13 @@ app.use(passport.initialize());
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", usersRouter);
+app.use("/logger-test", loggerTest);
 app.use("/", viewsRouter);
 
 app.use(errorHandler);
 
-const server = app.listen(8080, () => console.log("Listening on port 8080"));
+const PORT = config.port || 8080;
+const server = app.listen(PORT, () => logger.info(`Listening on port ${PORT}`));
 export const io = new Server(server);
 
 io.on("connection", (socket) => chat(socket));
