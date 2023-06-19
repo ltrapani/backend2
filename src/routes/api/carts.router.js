@@ -1,32 +1,21 @@
 import { Router } from "express";
-
-import {
-  addProduct,
-  createCart,
-  deleteAllProducts,
-  deleteProduct,
-  getCart,
-  purchase,
-  updateCart,
-  updateQuantity,
-} from "../../controllers/carts.controller.js";
-import { authorization, passportCall } from "../../utils.js";
+import * as cartsController from "../../controllers/carts.controller.js";
+import { authorization } from "../../utils.js";
 
 const router = Router();
 
-router.post("/", createCart);
-router.get("/:cid", getCart);
+router.post("/", cartsController.createCart);
+router.get("/:cid", cartsController.getCart);
 router.post(
   "/:cid/product/:pid",
-  passportCall("jwt"),
-  authorization("user"),
-  addProduct
+  authorization("user", "premium"),
+  cartsController.addProduct
 );
-router.put("/:cid", updateCart);
-router.put("/:cid/product/:pid", updateQuantity);
-router.delete("/:cid/products/:pid", deleteProduct);
-router.delete("/:cid/", deleteAllProducts);
+router.put("/:cid", cartsController.updateCart);
+router.put("/:cid/product/:pid", cartsController.updateQuantity);
+router.delete("/:cid/products/:pid", cartsController.deleteProduct);
+router.delete("/:cid/", cartsController.deleteAllProducts);
 
-router.post("/:cid/purchase", passportCall("jwt"), purchase);
+router.post("/:cid/purchase", cartsController.purchase);
 
 export default router;

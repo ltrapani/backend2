@@ -13,6 +13,7 @@ socket.on("realTimeProducts", (data) => {
       <td>${p.price}</td>
       <td>${p.status}</td>
       <td>${p.category}</td>
+      <td>${p.owner}</td>
   </tr>`;
   });
   container.innerHTML = products;

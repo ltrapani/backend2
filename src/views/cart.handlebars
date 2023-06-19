@@ -10,6 +10,7 @@
               <th scope="col">category</th>
               <th scope="col">quantity</th>
               <th scope="col">price</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -19,21 +20,38 @@
                 <td>{{this.product.category}}</td>
                 <td>{{this.quantity}}</td>
                 <td>${{this.product.price}}</td>
+                <td>
+                  <button
+                    class="btn btn-danger"
+                    onclick="(()=> removeItem('{{../_id}}','{{this.product._id}}'))()"
+                  >X</button>
+                </td>
               </tr>
             {{/each}}
           </tbody>
-          <tfoot>
-            {{#if products}}
-              <button
-                onclick="(()=> ckeckout('{{_id}}'))()"
-                class="btn btn-success"
-              >
-                Checkout
-              </button>
-            {{/if}}
-          </tfoot>
+          {{#if total}}
+           <tfoot>
+            <tr>
+              <td colspan="3">TOTAL</td>
+              <td>${{total}}</td>
+            </tr>
+           </tfoot>
+          {{/if}}
         </table>
       </div>
+    </div>
+    <div class="col-12">
+       {{#if products}}
+      <button 
+       onclick="(()=> emptyCart('{{_id}}'))()"
+      class="btn btn-danger me-2">Empty Cart</button>
+      <button
+        onclick="(()=> checkout('{{_id}}'))()"
+        class="btn btn-success"
+      >
+        Checkout
+      </button>
+        {{/if}}
     </div>
   </div>
 </div>

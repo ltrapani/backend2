@@ -1,15 +1,8 @@
 import { incompleteValues, isInvalidId } from "../lib/validators/validator.js";
 import logger from "../logger/logger.js";
-import {
-  createCart as createCartService,
-  getCart as getCartService,
-  addProduct as addProductService,
-  updateCart as updateCartService,
-  updateQuantity as updateQuantityService,
-  deleteProduct as deleteProductService,
-  deleteAllProducts as deleteAllProductsService,
-  purchase as purchaseService,
-} from "../services/carts.service.js";
+import * as cartsService from "../services/carts.service.js";
+import * as productsService from "../services/products.service.js";
+
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
 import {
@@ -17,11 +10,9 @@ import {
   notFoundErrorInfo,
 } from "../services/errors/info.js";
 
-import { getProduct as getProductService } from "../services/products.service.js";
-
-const createCart = async (req, res) => {
+export const createCart = async (req, res) => {
   try {
-    const response = await createCartService();
+    const response = await cartsService.createCart();
 
     res.send({ status: "success", message: "Cart created", response });
   } catch (error) {
@@ -30,13 +21,13 @@ const createCart = async (req, res) => {
   }
 };
 
-const getCart = async (req, res) => {
+export const getCart = async (req, res) => {
   try {
     const { cid } = req.params;
     if (isInvalidId(cid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const cart = await getCartService(cid);
+    const cart = await cartsService.getCart(cid);
     if (!cart)
       return res
         .status(404)
@@ -49,7 +40,7 @@ const getCart = async (req, res) => {
   }
 };
 
-const addProduct = async (req, res, next) => {
+export const addProduct = async (req, res, next) => {
   try {
     const { cid, pid } = req.params;
     if (isInvalidId(cid, pid)) {
@@ -60,7 +51,7 @@ const addProduct = async (req, res, next) => {
       throw err;
     }
 
-    const cart = await getCartService(cid);
+    const cart = await cartsService.getCart(cid);
     if (!cart) {
       const err = CustomError.createError({
         message: notFoundErrorInfo("cart"),
@@ -69,7 +60,7 @@ const addProduct = async (req, res, next) => {
       throw err;
     }
 
-    const product = await getProductService(pid);
+    const product = await productsService.getProduct(pid);
     if (!product) {
       const err = CustomError.createError({
         message: notFoundErrorInfo("product"),
@@ -78,7 +69,11 @@ const addProduct = async (req, res, next) => {
       throw err;
     }
 
-    const response = await addProductService(cart, product);
+    const response = await cartsService.addProduct(cart, product, req.user);
+    if (!response)
+      return res
+        .status(403)
+        .send({ status: "error", message: "You don't have permissions" });
 
     res.send({ status: "success", message: "Product added.", response });
   } catch (error) {
@@ -87,7 +82,7 @@ const addProduct = async (req, res, next) => {
   }
 };
 
-const updateCart = async (req, res) => {
+export const updateCart = async (req, res) => {
   try {
     const { cid } = req.params;
     const { newCart } = req.body;
@@ -95,13 +90,13 @@ const updateCart = async (req, res) => {
     if (isInvalidId(cid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const cart = await getCartService(cid);
+    const cart = await cartsService.getCart(cid);
     if (!cart)
       return res
         .status(404)
         .send({ status: "error", message: "cart not found" });
 
-    const response = await updateCartService(cid, newCart);
+    const response = await cartsService.updateCart(cid, newCart);
 
     res.send({ status: "success", message: "Cart updated", response });
   } catch (error) {
@@ -110,7 +105,7 @@ const updateCart = async (req, res) => {
   }
 };
 
-const updateQuantity = async (req, res) => {
+export const updateQuantity = async (req, res) => {
   try {
     const { cid, pid } = req.params;
     const { quantity } = req.body;
@@ -122,19 +117,19 @@ const updateQuantity = async (req, res) => {
     if (isInvalidId(cid, pid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const cart = await getCartService(cid);
+    const cart = await cartsService.getCart(cid);
     if (!cart)
       return res
         .status(404)
         .send({ status: "error", message: "cart not found" });
 
-    const product = await getProductService(pid);
+    const product = await productsService.getProduct(pid);
     if (!product)
       return res
         .status(404)
         .send({ status: "error", message: "product not found" });
 
-    const response = await updateQuantityService(cart, product, quantity);
+    const response = await cartsService.updateQuantity(cart, product, quantity);
 
     res.send({ status: "success", message: "Cart updated", response });
   } catch (error) {
@@ -143,25 +138,25 @@ const updateQuantity = async (req, res) => {
   }
 };
 
-const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     const { cid, pid } = req.params;
     if (isInvalidId(cid, pid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const cart = await getCartService(cid);
+    const cart = await cartsService.getCart(cid);
     if (!cart)
       return res
         .status(404)
         .send({ status: "error", message: "cart not found" });
 
-    const product = await getProductService(pid);
+    const product = await productsService.getProduct(pid);
     if (!product)
       return res
         .status(404)
         .send({ status: "error", message: "product not found" });
 
-    const response = await deleteProductService(cart, product);
+    const response = await cartsService.deleteProduct(cart, product);
 
     res.send({ status: "success", message: "Product was deleted.", response });
   } catch (error) {
@@ -170,19 +165,24 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-const deleteAllProducts = async (req, res) => {
+export const deleteAllProducts = async (req, res) => {
   try {
     const { cid } = req.params;
     if (isInvalidId(cid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const cart = await getCartService(cid);
+    const cart = await cartsService.getCart(cid);
     if (!cart)
       return res
         .status(404)
         .send({ status: "error", message: "cart not found" });
 
-    const response = await deleteAllProductsService(cart);
+    if (req.user.cart !== cid)
+      return res
+        .status(403)
+        .send({ status: "error", message: "You don't have permissions" });
+
+    const response = await cartsService.deleteAllProducts(cart);
 
     res.send({
       status: "success",
@@ -190,24 +190,29 @@ const deleteAllProducts = async (req, res) => {
       response,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send({ error });
   }
 };
 
-const purchase = async (req, res) => {
+export const purchase = async (req, res) => {
   try {
     const { cid } = req.params;
     if (isInvalidId(cid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const cart = await getCartService(cid);
+    const cart = await cartsService.getCart(cid);
     if (!cart)
       return res
         .status(404)
         .send({ status: "error", message: "cart not found" });
 
-    const result = await purchaseService(cart, req.user.email);
+    if (req.user.cart !== cid)
+      return res
+        .status(403)
+        .send({ status: "error", message: "You don't have permissions" });
+
+    const result = await cartsService.purchase(cart, req.user.email);
     if (result.products.length === 0)
       return res.send({
         status: "success",
@@ -232,15 +237,4 @@ const purchase = async (req, res) => {
     logger.error(error);
     res.status(500).send({ error });
   }
-};
-
-export {
-  createCart,
-  getCart,
-  addProduct,
-  updateCart,
-  updateQuantity,
-  deleteProduct,
-  deleteAllProducts,
-  purchase,
 };

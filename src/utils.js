@@ -26,14 +26,19 @@ export const passportCall = (strategy) => {
       }
 
       req.user = new UsersDto(user);
+
+      if (req.user.role === "admin") req.user.isAdmin = true;
+      if (req.user.role === "premium") req.user.isPremium = true;
+      if (req.user.role === "user") req.user.isUser = true;
+
       next();
     })(req, res, next);
   };
 };
 
-export const authorization = (role) => {
+export const authorization = (...roles) => {
   return async (req, res, next) => {
-    if (req.user.role !== role)
+    if (!roles.includes(req.user.role))
       return res
         .status(403)
         .send({ status: "error", message: "You don't have permissions" });

@@ -5,7 +5,7 @@ import { generateProduct } from "../mocking/products.mock.js";
 
 const productRepository = new ProductsRepository(productsManager);
 
-const getProductsPaginate = async (limit, page, query, sort) => {
+export const getProductsPaginate = async (limit, page, query, sort) => {
   if (query) query = JSON.parse(query);
   if (sort) sort = { price: sort };
 
@@ -36,14 +36,19 @@ const getProductsPaginate = async (limit, page, query, sort) => {
   return response;
 };
 
-const getAll = async () => await productRepository.getAll();
+export const getAll = async () => await productRepository.getAll();
 
-const getProduct = async (pid) => await productRepository.getProduct(pid);
+export const getProduct = async (pid) =>
+  await productRepository.getProduct(pid);
 
-const getProductByCode = async (code) =>
+export const getProductByCode = async (code) =>
   await productRepository.getProductByCode(code);
 
-const addProduct = async (product) => {
+export const addProduct = async (product, user) => {
+  if (user.role === "premium") {
+    product.owner = user.email;
+  }
+
   const response = await productRepository.addProduct(product);
 
   const products = await productRepository.getAll();
@@ -51,32 +56,45 @@ const addProduct = async (product) => {
   return response;
 };
 
-const updateProduct = async (pid, product) =>
-  await productRepository.updateProduct(pid, product);
+export const updateProduct = async (product, newProduct, user) => {
+  let response = false;
+  if (user.role === "admin") {
+    response = await productRepository.updateProduct(product._id, newProduct);
+  }
 
-const deleteProduct = async (pid) => {
-  const response = await productRepository.deleteProduct(pid);
-
-  const products = await productRepository.getAll();
-  io.emit("realTimeProducts", products);
+  if (product.owner === user.email) {
+    response = await productRepository.updateProduct(product._id, newProduct);
+  }
+  if (response) {
+    const products = await productRepository.getAll();
+    io.emit("realTimeProducts", products);
+  }
   return response;
 };
 
-const getMockingProducts = async (quantity) => {
+export const updateProductCheckout = async (pid, newProduct) =>
+  await productRepository.updateProduct(pid, newProduct);
+
+export const deleteProduct = async (product, user) => {
+  let response = false;
+  if (user.role === "admin") {
+    response = await productRepository.deleteProduct(product._id);
+  }
+
+  if (product.owner === user.email) {
+    response = await productRepository.deleteProduct(product._id);
+  }
+  if (response) {
+    const products = await productRepository.getAll();
+    io.emit("realTimeProducts", products);
+  }
+  return response;
+};
+
+export const getMockingProducts = async (quantity) => {
   const mockingProducts = [];
   for (let i = 0; i < quantity; i++) {
     mockingProducts.push(generateProduct());
   }
   return mockingProducts;
-};
-
-export {
-  getProductsPaginate,
-  getAll,
-  getProduct,
-  getProductByCode,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  getMockingProducts,
 };

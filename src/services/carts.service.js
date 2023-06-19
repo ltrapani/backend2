@@ -3,15 +3,27 @@ import { cartsManager } from "../dao/index.js";
 import CartsRepository from "../repository/carts.repository.js";
 import * as productsService from "./products.service.js";
 import * as ticketsService from "./tickets.service.js";
-import { transporter } from "../utils.js";
+import { purchaseHtml } from "../utils/htmlTemplates.js";
+import { sendEmail } from "./email.service.js";
 
 const cartRepository = new CartsRepository(cartsManager);
 
-const createCart = async () => await cartRepository.createCart();
+export const createCart = async () => await cartRepository.createCart();
 
-const getCart = async (cid) => await cartRepository.getCart(cid);
+export const getCart = async (cid) => {
+  const cart = await cartRepository.getCart(cid);
+  let total = 0;
+  if (cart.products.length > 0) {
+    cart.products.forEach((product) => {
+      total += product.product.price * product.quantity;
+    });
+    cart.total = total;
+  }
+  return cart;
+};
 
-const addProduct = async (cart, product) => {
+export const addProduct = async (cart, product, user) => {
+  if (product.owner === user.email) return false;
   const index = cart.products.findIndex(
     (p) => p.product._id.toString() === product._id.toString()
   );
@@ -21,10 +33,10 @@ const addProduct = async (cart, product) => {
   return await cartRepository.addProduct(cart._id, cart);
 };
 
-const updateCart = async (cid, cart) =>
+export const updateCart = async (cid, cart) =>
   await cartRepository.updateCart(cid, cart);
 
-const updateQuantity = async (cart, product, quantity) => {
+export const updateQuantity = async (cart, product, quantity) => {
   const index = cart.products.findIndex(
     (p) => p.product._id.toString() === product._id.toString()
   );
@@ -35,13 +47,13 @@ const updateQuantity = async (cart, product, quantity) => {
   return await cartRepository.updateCart(cart._id, cart);
 };
 
-const deleteProduct = async (cart, product) =>
+export const deleteProduct = async (cart, product) =>
   await cartRepository.deleteProduct(cart._id, product._id);
 
-const deleteAllProducts = async (cart) =>
+export const deleteAllProducts = async (cart) =>
   await cartRepository.deleteAllProducts(cart._id);
 
-const purchase = async (cart, email) => {
+export const purchase = async (cart, email) => {
   const ticket = {
     code: nanoid(20),
     amount: 0,
@@ -55,7 +67,7 @@ const purchase = async (cart, email) => {
     if (productDB.stock >= quantity) {
       ticket.amount += productDB.price * quantity;
       productDB.stock = productDB.stock - quantity;
-      await productsService.updateProduct(pid, productDB);
+      await productsService.updateProductCheckout(pid, productDB);
 
       cart.products = cart.products.filter(
         (p) => p.product._id.toString() !== pid
@@ -67,29 +79,10 @@ const purchase = async (cart, email) => {
 
   if (ticket.amount) {
     cart.ticket = await ticketsService.createTicket(ticket);
-    await transporter.sendMail({
-      from: "Ecommerce<ecommercecoderhouse@gmail.com>",
-      to: email,
-      subject: "Compra Web",
-      html: `
-      <div>
-        <h1>Muchas gracias por tu compra.</h1>
-        <p>El codigo de tu compra es: ${cart.ticket.code}</p>
-        <strong>Saludos coordiales.</strong>
-      </div>`,
-    });
+
+    const html = purchaseHtml(cart.ticket.code);
+    await sendEmail(email, "Web purchase", html);
   }
 
   return cart;
-};
-
-export {
-  createCart,
-  getCart,
-  addProduct,
-  updateCart,
-  updateQuantity,
-  deleteProduct,
-  deleteAllProducts,
-  purchase,
 };

@@ -14,4 +14,5 @@ export default {
   admin_password: process.env.ADMIN_PASSWORD,
   gmail_user: process.env.GMAIL_USER,
   gmail_pass: process.env.GMAIL_PASS,
+  reset_password_minutes: process.env.RESET_PASSWORD_MINUTES,
 };

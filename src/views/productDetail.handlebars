@@ -26,10 +26,18 @@
               <td>{{stock}}</td>
               <td>{{category}}</td>
               <td>
-                <button
-                  class="btn btn-success"
-                  onclick="addToCart('{{user.cart}}','{{_id}}')"
-                >Agregar a carrito</button>
+                {{#if user.isUser}}
+                  <button
+                    class="btn btn-success"
+                    onclick="addToCart('{{user.cart}}','{{_id}}')"
+                  >Agregar a carrito</button>
+                {{/if}}
+                {{#if user.isPremium}}
+                  <button
+                    class="btn btn-success"
+                    onclick="addToCart('{{user.cart}}','{{_id}}')"
+                  >Agregar a carrito</button>
+                {{/if}}
               </td>
             </tr>
           </tbody>

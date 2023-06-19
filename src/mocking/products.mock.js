@@ -17,5 +17,6 @@ export const generateProduct = () => {
     stock: faker.random.numeric(),
     category: faker.random.word(),
     thumbnail,
+    owner: "admin",
   };
 };

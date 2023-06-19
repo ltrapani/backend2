@@ -7,21 +7,18 @@ import {
   addProductErrorInfo,
 } from "../services/errors/info.js";
 
-import {
-  deleteProduct as deleteProductService,
-  updateProduct as updateProductService,
-  addProduct as addProductService,
-  getProduct as getProductService,
-  getProductsPaginate as getProductsPaginateService,
-  getProductByCode as getProductByCodeService,
-  getMockingProducts as getMockingProductsService,
-} from "../services/products.service.js";
+import * as productsService from "../services/products.service.js";
 
-const getProductsPaginate = async (req, res) => {
+export const getProductsPaginate = async (req, res) => {
   try {
     let { limit = 10, page = 1, query = "", sort = "" } = req.query;
 
-    const response = await getProductsPaginateService(limit, page, query, sort);
+    const response = await productsService.getProductsPaginate(
+      limit,
+      page,
+      query,
+      sort
+    );
 
     res.send(response);
   } catch (error) {
@@ -30,13 +27,13 @@ const getProductsPaginate = async (req, res) => {
   }
 };
 
-const getProduct = async (req, res) => {
+export const getProduct = async (req, res) => {
   try {
     const { pid } = req.params;
     if (isInvalidId(pid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const product = await getProductService(pid);
+    const product = await productsService.getProduct(pid);
     if (!product)
       return res
         .status(404)
@@ -49,7 +46,7 @@ const getProduct = async (req, res) => {
   }
 };
 
-const addProduct = async (req, res, next) => {
+export const addProduct = async (req, res, next) => {
   try {
     const newProduct = req.body;
     const { title, description, code, price, stock, category } = newProduct;
@@ -68,7 +65,7 @@ const addProduct = async (req, res, next) => {
       throw err;
     }
 
-    const product = await getProductByCodeService(code);
+    const product = await productsService.getProductByCode(code);
     if (product) {
       const err = CustomError.createError({
         message: addDuplicateProductErrorInfo(code),
@@ -77,7 +74,7 @@ const addProduct = async (req, res, next) => {
       throw err;
     }
 
-    const response = await addProductService(newProduct);
+    const response = await productsService.addProduct(newProduct, req.user);
 
     res.send({ status: "success", message: "Product added", response });
   } catch (error) {
@@ -86,20 +83,29 @@ const addProduct = async (req, res, next) => {
   }
 };
 
-const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res) => {
   try {
     const { pid } = req.params;
     const newProduct = req.body;
     if (isInvalidId(pid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const product = await getProductService(pid);
+    const product = await productsService.getProduct(pid);
     if (!product)
       return res
         .status(404)
         .send({ status: "error", message: "Product not found" });
 
-    const response = await updateProductService(pid, newProduct);
+    const response = await productsService.updateProduct(
+      product,
+      newProduct,
+      req.user
+    );
+
+    if (!response)
+      return res
+        .status(403)
+        .send({ status: "error", message: "You don't have permissions" });
 
     res.send({ status: "success", message: "Product update", response });
   } catch (error) {
@@ -108,19 +114,23 @@ const updateProduct = async (req, res) => {
   }
 };
 
-const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     const { pid } = req.params;
     if (isInvalidId(pid))
       return res.status(400).send({ status: "error", message: "Invalid id" });
 
-    const product = await getProductService(pid);
+    const product = await productsService.getProduct(pid);
     if (!product)
       return res
         .status(404)
         .send({ status: "error", message: "Product not found" });
 
-    const response = await deleteProductService(pid);
+    const response = await productsService.deleteProduct(product, req.user);
+    if (!response)
+      return res
+        .status(403)
+        .send({ status: "error", message: "You don't have permissions" });
 
     res.send({ status: "success", message: "Product delete", response });
   } catch (error) {
@@ -129,16 +139,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-const getMockingProducts = async (req, res) => {
-  const response = await getMockingProductsService(100);
+export const getMockingProducts = async (req, res) => {
+  const response = await productsService.getMockingProducts(100);
   res.send({ status: "success", message: "Mocking products", response });
-};
-
-export {
-  getProductsPaginate,
-  getProduct,
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  getMockingProducts,
 };

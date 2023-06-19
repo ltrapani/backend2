@@ -61,6 +61,7 @@ const initializePassport = () => {
 
   passport.deserializeUser(async (id, done) => {
     const user = await userRepository.findById(id);
+
     done(null, user);
   });
 };

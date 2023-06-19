@@ -16,6 +16,10 @@ const usersSchema = new mongoose.Schema({
     type: String,
     default: "user",
   },
+  resetPasswordDate: {
+    type: Date,
+    default: 0,
+  },
 });
 
 export const userModel = mongoose.model(userCollection, usersSchema);

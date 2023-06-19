@@ -31,13 +31,34 @@
           <ul class="navbar-nav">
             {{#if user}}
               <li class="nav-item">
+                <a class="nav-link" href="/products">Products</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/profile">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/mocking-products">Mocking</a>
+              </li>
+            {{else}}
+              <li class="nav-item ms-auto">
+                <a class="nav-link" href="/login">Login</a>
+              </li>
+            {{/if}}
+            {{#if user.isAdmin}}
+              <li class="nav-item">
+                <a class="nav-link" href="/realtimeproducts">Real Time Products</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="/update-role">Roles</a>
+              </li>
+            {{/if}}
+            {{#if user.isPremium}}
+              <li class="nav-item">
                 <a class="nav-link" href="/realtimeproducts">Real Time Products</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/chat">Chat</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/products">Products</a>
               </li>
               <li class="nav-item">
                 <a
@@ -46,17 +67,25 @@
                   id="cart"
                 >Cart</a>
               </li>
+            {{/if}}
+            {{#if user.isUser}}
               <li class="nav-item">
-                <a class="nav-link" href="/profile">Profile</a>
+                <a class="nav-link" href="/chat">Chat</a>
               </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  href="/carts/{{user.cart}}"
+                  id="cart"
+                >Cart</a>
+              </li>
+            {{/if}}
+            {{#if user}}
               <li class="nav-item">
                 <a class="nav-link" href="/api/users/logout">Logout</a>
               </li>
-            {{else}}
-              <li class="nav-item ms-auto">
-                <a class="nav-link" href="/login">Login</a>
-              </li>
             {{/if}}
+
           </ul>
         </div>
       </div>
