@@ -16,6 +16,8 @@ import passport from "passport";
 import { chat } from "./chat/chat.js";
 import logger from "./logger/logger.js";
 import config from "./config/config.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 const app = express();
 
@@ -31,6 +33,20 @@ app.use(cookieParser());
 
 initializePassport();
 app.use(passport.initialize());
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "CoderHouse Final Project Documentation",
+      description: "API Ecommerce - Commission 44985",
+    },
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`],
+};
+
+const specs = swaggerJSDoc(swaggerOptions);
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 app.use("/api/products", passportCall("jwt"), productsRouter);
 app.use("/api/carts", passportCall("jwt"), cartsRouter);

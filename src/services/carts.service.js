@@ -12,6 +12,7 @@ export const createCart = async () => await cartRepository.createCart();
 
 export const getCart = async (cid) => {
   const cart = await cartRepository.getCart(cid);
+  if (!cart) return null;
   let total = 0;
   if (cart.products.length > 0) {
     cart.products.forEach((product) => {
