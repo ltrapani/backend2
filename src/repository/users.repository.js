@@ -5,6 +5,8 @@ export default class UsersRepository {
     this.dao = dao;
   }
 
+  getUsers = async () => await this.dao.getUsers();
+
   create = async (user) => await this.dao.create(user);
 
   createGitHubUser = async (user) =>

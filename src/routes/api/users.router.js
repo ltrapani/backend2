@@ -42,4 +42,18 @@ router.post(
   usersController.updateRole
 );
 
+router.get(
+  "/",
+  passportCall("jwt"),
+  authorization("admin"),
+  usersController.getUsers
+);
+
+router.delete(
+  "/:uid",
+  passportCall("jwt"),
+  authorization("admin"),
+  usersController.deleteUser
+);
+
 export default router;

@@ -25,7 +25,7 @@ export const register = async (req, res) => {
         .status(400)
         .send({ status: "error", message: "User already exists!" });
 
-    await userService.register(
+    const response = await userService.register(
       first_name,
       last_name,
       email,
@@ -34,7 +34,11 @@ export const register = async (req, res) => {
       password
     );
 
-    res.send({ status: "success", message: "user registered" });
+    res.send({
+      status: "success",
+      message: "user registered",
+      id: response._id,
+    });
   } catch (error) {
     logger.error(error);
     res.status(500).send(error);
@@ -171,6 +175,36 @@ export const updateRole = async (req, res) => {
     await userService.updateRole(user, role);
 
     res.send({ status: "success", message: "User update successfully" });
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).send(error);
+  }
+};
+
+export const getUsers = async (req, res) => {
+  try {
+    const users = await userService.getUsers();
+
+    res.send({ status: "success", users });
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).send(error);
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    if (isInvalidId(uid))
+      return res.status(400).send({ status: "error", message: "Invalid id" });
+
+    const result = await userService.deleteUser(uid);
+
+    res.send({
+      status: "success",
+      message: "User deleted successfully",
+      result,
+    });
   } catch (error) {
     logger.error(error.message);
     res.status(500).send(error);

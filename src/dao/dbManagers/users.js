@@ -6,6 +6,8 @@ export default class Users {
     logger.info("Working users with DB in mongoDB");
   }
 
+  getUsers = async () => await userModel.find({});
+
   create = async (user) => await userModel.create(user);
 
   findById = async (uid) => await userModel.findOne({ _id: uid });
