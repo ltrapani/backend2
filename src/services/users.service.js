@@ -8,14 +8,15 @@ import { createHash, generateToken, validatePassword } from "../utils.js";
 import { sendEmail } from "./email.service.js";
 import config from "../config/config.js";
 import { resetPasswordHtml } from "../utils/htmlTemplates.js";
+import * as productsService from "../services/products.service.js";
 
 const cartRepository = new CartsRepository(cartsManager);
 const userRepository = new UsersRepository(usersManager);
 
 export const getUserByEmail = async (email) =>
-  userRepository.findByEmail(email);
+  await userRepository.findByEmail(email);
 
-export const getUserById = async (id) => userRepository.findById(id);
+export const getUserById = async (id) => await userRepository.findById(id);
 
 export const register = async (
   first_name,
@@ -37,6 +38,8 @@ export const register = async (
 };
 
 export const login = async (user, password) => {
+  user.last_connection = moment().format();
+  await userRepository.update(user.email, user);
   user = await userRepository.login(user);
 
   if (!user.cart) {
@@ -50,6 +53,12 @@ export const login = async (user, password) => {
   }
 
   return user;
+};
+
+export const logout = async (user) => {
+  user = await userRepository.findById(user._id);
+  user.last_connection = moment().format();
+  return await userRepository.update(user.email, user);
 };
 
 export const githubCallback = async (user) => {
@@ -91,8 +100,14 @@ export const resetPassword = async (id, password) => {
 };
 
 export const updateRole = async (user, role) => {
+  if (
+    user.documents.length !== Number(config.number_of_documents) &&
+    role === "premium"
+  )
+    return null;
+
   user.role = role;
-  await userRepository.update(user.email, user);
+  return await userRepository.update(user.email, user);
 };
 
 export const getUsers = async () => {
@@ -101,3 +116,40 @@ export const getUsers = async () => {
 };
 
 export const deleteUser = async (uid) => await userRepository.delete(uid);
+
+export const saveDocuments = async (user, files) => {
+  const docs = ["identification", "address", "statusCount"];
+
+  const newFiles = [];
+  docs.forEach((doc) => {
+    if (files[doc]) newFiles.push(files[doc][0]);
+  });
+
+  newFiles.forEach((file) => {
+    if (!user.documents.some((doc) => doc.name === file.fieldname))
+      user.documents.push({
+        name: file.fieldname,
+        reference: `/documents/${user._id}/${file.filename}`,
+      });
+  });
+
+  return await userRepository.update(user.email, user);
+};
+
+export const saveUserProfile = async (user, file) => {
+  if (!user.profile) user.profile = `/profiles/${file.filename}`;
+
+  return await userRepository.update(user.email, user);
+};
+
+export const saveProductsPhotos = async (pid, files) => {
+  const product = await productsService.getProduct(pid);
+  if (!product) {
+    await productsService.deleteInvalidThumbnail(files);
+    return res
+      .status(404)
+      .send({ status: "error", message: "Product not found" });
+  }
+
+  return await productsService.updateThumbnail(product, files);
+};

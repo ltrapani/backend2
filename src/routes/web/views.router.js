@@ -55,6 +55,13 @@ router.get(
 
 router.get("/profile", passportCall("jwt"), viewController.profile);
 
+router.get(
+  "/documents",
+  passportCall("jwt"),
+  authorization("user"),
+  viewController.documents
+);
+
 // publics router
 
 router.get("/register", viewController.register);

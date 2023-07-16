@@ -2,61 +2,102 @@
   <h1>Real Time Products</h1>
   <div class="row">
 
-    <div class="col-6">
-      <h2>Agregar Producto</h2>
+    <div class="col-12 col-xl-4">
+      <div class="row">
+        <div class="col-12">
+          <h2>ADD PRODUCT</h2>
 
-      <form id="formAddProduct" class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label" for="title">Titulo</label>
-          <input class="form-control" type="text" id="title" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label" for="description">Descripcion</label>
-          <input class="form-control" type="text" id="description" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label" for="code">Codigo</label>
-          <input class="form-control" type="text" id="code" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label" for="price">Precio</label>
-          <input class="form-control" type="number" id="price" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label" for="stock">Stock</label>
-          <input class="form-control" type="number" id="stock" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label" for="category">Categoria</label>
-          <input class="form-control" type="text" id="category" />
-        </div>
-        <div class="col-md-6">
-          <button class="btn btn-primary" id="addProduct">Agregar</button>
-        </div>
+          <form id="formAddProduct" class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="title">Title</label>
+              <input
+                class="form-control form-control-sm"
+                type="text"
+                id="title"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="description">Description</label>
+              <input
+                class="form-control form-control-sm"
+                type="text"
+                id="description"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="code">Code</label>
+              <input
+                class="form-control form-control-sm"
+                type="text"
+                id="code"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="price">Price</label>
+              <input
+                class="form-control form-control-sm"
+                type="number"
+                id="price"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="stock">Stock</label>
+              <input
+                class="form-control form-control-sm"
+                type="number"
+                id="stock"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="category">Category</label>
+              <input
+                class="form-control form-control-sm"
+                type="text"
+                id="category"
+              />
+            </div>
+            <div class="col-md-6">
+              <button class="btn btn-primary" id="addProduct">Add</button>
+            </div>
+          </form>
 
-      </form>
+        </div>
+        <div class="col-12">
+          <h3>Add Photos to a product</h3>
+          <select id="productSelect" class="form-select form-select-sm">
+            <option value="">Select a product</option>
+            {{#each products}}
+              <option value="{{this._id}}">{{this.title}}
+                -
+                {{this._id}}</option>
+            {{/each}}
+          </select>
+
+          <label for="file1" class="form-label text-uppercase">
+            File 1
+          </label>
+          <input class="form-control form-control-sm" type="file" id="file1" />
+          <label for="file2" class="form-label text-uppercase">
+            File 1
+          </label>
+          <input class="form-control form-control-sm" type="file" id="file2" />
+          <label for="file3" class="form-label text-uppercase">
+            File 1
+          </label>
+          <input class="form-control form-control-sm" type="file" id="file3" />
+          <button
+            class="btn btn-info btn-sm my-3"
+            onclick="uploadProductFiles('{{user._id}}')"
+          >Upload files</button>
+        </div>
+      </div>
 
     </div>
-    <div class="col-6">
-      <h2>Borrar Producto</h2>
-      <form id="formDeleteProduct" class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label" for="productId">Ingrese ID producto</label>
-          <input class="form-control" type="text" id="productId" />
-        </div>
-        <div class="col-md-12">
-          <button class="btn btn-danger" id="deleteProduct">Borrar</button>
-        </div>
+    <div class="col-12 col-xl-8">
+      <h2>List of Products</h2>
+      <div class="table-responsive">
 
-      </form>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <h2>Lista de productos</h2>
-      <div id="container">
-        <table class="table">
+        <table class="table table-sm">
           <thead>
             <tr>
               <th scope="col">_id</th>
@@ -67,6 +108,7 @@
               <th scope="col">status</th>
               <th scope="col">category</th>
               <th scope="col">owner</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody id="tbody-products">
@@ -80,6 +122,10 @@
                 <td>{{this.status}}</td>
                 <td>{{this.category}}</td>
                 <td>{{this.owner}}</td>
+                <td><button
+                    class="btn btn-outline-danger btn-sm"
+                    onclick="deleteProduct('{{this._id}}')"
+                  >x</button></td>
               </tr>
             {{/each}}
           </tbody>

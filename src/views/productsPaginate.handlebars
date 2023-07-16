@@ -31,20 +31,20 @@
                 <td>
                   <a href="/products/{{this._id}}"><button
                       class="btn btn-info"
-                    >Detalle</button></a>
+                    >Detail</button></a>
                 </td>
                 <td>
                 {{#if ../user.isUser}}
                   <button
                     class="btn btn-success"
                     onclick="addToCart('{{../user.cart}}','{{this._id}}')"
-                  >Agregar a carrito</button>
+                  >Add to Cart</button>
                 {{/if}}
                  {{#if ../user.isPremium}}
                   <button
                     class="btn btn-success"
                     onclick="addToCart('{{../user.cart}}','{{this._id}}')"
-                  >Agregar a carrito</button>
+                  >Add to Cart</button>
                 {{/if}}
                 </td>
               </tr>

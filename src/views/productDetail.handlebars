@@ -2,46 +2,50 @@
   <h1>Product Detail</h1>
   <div class="row">
     <div class="col-12">
-      <div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Title</th>
-              <th scope="col">description</th>
-              <th scope="col">code</th>
-              <th scope="col">price</th>
-              <th scope="col">status</th>
-              <th scope="col">stock</th>
-              <th scope="col">category</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{title}}</td>
-              <td>{{description}}</td>
-              <td>{{code}}</td>
-              <td>${{price}}</td>
-              <td>{{status}}</td>
-              <td>{{stock}}</td>
-              <td>{{category}}</td>
-              <td>
-                {{#if user.isUser}}
-                  <button
-                    class="btn btn-success"
-                    onclick="addToCart('{{user.cart}}','{{_id}}')"
-                  >Agregar a carrito</button>
-                {{/if}}
-                {{#if user.isPremium}}
-                  <button
-                    class="btn btn-success"
-                    onclick="addToCart('{{user.cart}}','{{_id}}')"
-                  >Agregar a carrito</button>
-                {{/if}}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Code</th>
+            <th scope="col">Price</th>
+            <th scope="col">Status</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Category</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{title}}</td>
+            <td>{{description}}</td>
+            <td>{{code}}</td>
+            <td>${{price}}</td>
+            <td>{{status}}</td>
+            <td>{{stock}}</td>
+            <td>{{category}}</td>
+            <td>
+              {{#if user.isUser}}
+                <button
+                  class="btn btn-success"
+                  onclick="addToCart('{{user.cart}}','{{_id}}')"
+                >Add To Cart</button>
+              {{/if}}
+              {{#if user.isPremium}}
+                <button
+                  class="btn btn-success"
+                  onclick="addToCart('{{user.cart}}','{{_id}}')"
+                >Add to Cart</button>
+              {{/if}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="col-12">
+        <h2>Images</h2>
+        {{#each thumbnail}}
+          <img class="product-img" src={{this}} alt="" />
+        {{/each}}
       </div>
     </div>
   </div>

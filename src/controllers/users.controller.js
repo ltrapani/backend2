@@ -40,7 +40,7 @@ export const register = async (req, res) => {
       id: response._id,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send(error);
   }
 };
@@ -76,14 +76,21 @@ export const login = async (req, res) => {
       })
       .send({ status: "success", message: "login success" });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send(error);
   }
 };
 
-export const logout = (req, res) => {
-  res.clearCookie("coderCookieToken");
-  res.redirect("/login");
+export const logout = async (req, res) => {
+  try {
+    await userService.logout(req.user);
+
+    res.clearCookie("coderCookieToken");
+    res.redirect("/login");
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).send(error);
+  }
 };
 
 export const sendEmailResetPassword = async (req, res) => {
@@ -125,7 +132,7 @@ export const githubCallback = async (req, res) => {
       })
       .redirect("/products");
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send(error);
   }
 };
@@ -172,9 +179,18 @@ export const updateRole = async (req, res) => {
         .status(404)
         .send({ status: "error", message: "User not found" });
 
-    await userService.updateRole(user, role);
+    const result = await userService.updateRole(user, role);
+    if (!result)
+      return res.status(400).send({
+        status: "error",
+        message: "Can not update role. Missing upload files",
+      });
 
-    res.send({ status: "success", message: "User update successfully" });
+    res.send({
+      status: "success",
+      message: "User update successfully.",
+      result,
+    });
   } catch (error) {
     logger.error(error.message);
     res.status(500).send(error);
@@ -203,6 +219,61 @@ export const deleteUser = async (req, res) => {
     res.send({
       status: "success",
       message: "User deleted successfully",
+      result,
+    });
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).send(error);
+  }
+};
+
+export const documents = async (req, res) => {
+  try {
+    const { storage, pid } = req.query;
+    const { uid } = req.params;
+
+    if (!Object.keys(req.files).length)
+      return res.status(400).send({
+        status: "error",
+        message: "Error, you must send at least one file",
+      });
+
+    if (isInvalidId(uid))
+      return res
+        .status(400)
+        .send({ status: "error", message: "Invalid user id" });
+
+    const user = await userService.getUserById(uid);
+    if (!user)
+      return res
+        .status(404)
+        .send({ status: "error", message: "User not found" });
+
+    let result;
+    if (storage === "documents") {
+      result = await userService.saveDocuments(user, req.files);
+    }
+
+    if (storage === "profile") {
+      result = await userService.saveUserProfile(user, req.files["profile"][0]);
+    }
+
+    if (storage === "products" && pid) {
+      result = await userService.saveProductsPhotos(pid, req.files.products);
+      if (!result)
+        return res
+          .status(404)
+          .send({ status: "error", message: "Product not found" });
+    }
+
+    if (!result)
+      return res
+        .status(400)
+        .send({ status: "error", message: "Error saving documents" });
+
+    res.send({
+      status: "success",
+      message: "Load file success",
       result,
     });
   } catch (error) {

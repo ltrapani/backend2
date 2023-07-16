@@ -1,25 +1,50 @@
 <div class="container">
   <div class="row justify-content-center">
-    <div class="col-12 col-md-6">
-      <div class="card mt-3">
-        <div class="card-header">
-          Profile
-        </div>
-        <div class="card-body">
+    <h2>My Profile</h2>
 
-          <p>First Name: {{user.first_name}} </p>
-          <p>Last Name: {{user.last_name}}</p>
-          <p>Email: {{user.email}}</p>
-          <p>Age: {{user.age}}</p>
-          <p>Rol: {{user.role}}</p>
-        </div>
-        <div class="card-footer">
-
-          <a href="/api/users/logout"><button
-              class="btn btn-outline-dark"
-            >Logout</button></a>
-        </div>
+    <div class="col-12 col-md-4">
+      {{#if user.profile}}
+        <img
+          id="imgProfile"
+          src="{{user.profile}}"
+          class="card-img-top"
+          alt="..."
+        />
+      {{else}}
+        <img
+          id="imgProfile"
+          src="https://cdn-icons-png.flaticon.com/512/21/21104.png"
+          class="card-img-top"
+          alt="..."
+        />
+      {{/if}}
+      <div class="mb-3">
+        <input class="form-control" type="file" id="profile" />
+        <button
+          class="btn btn-sm btn-outline-info mt-2"
+          onclick="(()=> updateProfile('{{user._id}}'))()"
+        >Update</button>
       </div>
     </div>
+    <div class="col-12 col-md-6">
+      <ul class="list-group">
+        <li class="list-group-item">First Name: {{user.first_name}} </li>
+        <li class="list-group-item">Last Name: {{user.last_name}}</li>
+        <li class="list-group-item">Email: {{user.email}}</li>
+        <li class="list-group-item">Age: {{user.age}}</li>
+        <li class="list-group-item">Rol: {{user.role}}</li>
+        <li class="list-group-item">Last Connection:
+          <span id="lastConnection">{{user.last_connection}}</span></li>
+      </ul>
+    </div>
+
   </div>
 </div>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"
+  integrity="sha512-42PE0rd+wZ2hNXftlM78BSehIGzezNeQuzihiBCvUEB3CVxHvsShF86wBWwQORNxNINlBPuq7rG4WWhNiTVHFg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="/js/profile.js">
+</script>

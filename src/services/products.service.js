@@ -2,6 +2,8 @@ import { productsManager } from "../dao/index.js";
 import { io } from "../app.js";
 import ProductsRepository from "../repository/products.repository.js";
 import { generateProduct } from "../mocking/products.mock.js";
+import fs from "fs";
+import logger from "../logger/logger.js";
 
 const productRepository = new ProductsRepository(productsManager);
 
@@ -97,4 +99,23 @@ export const getMockingProducts = async (quantity) => {
     mockingProducts.push(generateProduct());
   }
   return mockingProducts;
+};
+
+export const updateThumbnail = async (product, files) => {
+  files.forEach((file) => {
+    product.thumbnail.push(`/products/${product._id}/${file.filename}`);
+  });
+  return await productRepository.updateProduct(product._id, product);
+};
+
+export const deleteInvalidThumbnail = async (files) => {
+  const { destination } = files[0];
+  fs.rm(destination, { recursive: true }, (err) => {
+    if (err) {
+      logger.error(err.message);
+      throw err;
+    }
+
+    logger.info(`${destination} is deleted!`);
+  });
 };

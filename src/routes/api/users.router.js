@@ -1,6 +1,11 @@
 import { Router } from "express";
 import passport from "passport";
-import { authorization, passportCall } from "../../utils.js";
+import {
+  authorization,
+  passportCall,
+  storageDocuments,
+  uploader,
+} from "../../utils.js";
 import * as usersController from "../../controllers/users.controller.js";
 
 const router = Router();
@@ -9,7 +14,7 @@ router.post("/register", usersController.register);
 
 router.post("/login", usersController.login);
 
-router.get("/logout", usersController.logout);
+router.get("/logout", passportCall("jwt"), usersController.logout);
 
 router.post(
   "/send-email-reset-password",
@@ -54,6 +59,20 @@ router.delete(
   passportCall("jwt"),
   authorization("admin"),
   usersController.deleteUser
+);
+
+router.post(
+  "/:uid/documents",
+  passportCall("jwt"),
+  uploader(storageDocuments).fields([
+    { name: "identification", maxCount: 1 },
+    { name: "address", maxCount: 1 },
+    { name: "statusCount", maxCount: 1 },
+    { name: "profile", maxCount: 1 },
+    { name: "products", maxCount: 4 },
+    { name: "pid", maxCount: 1 },
+  ]),
+  usersController.documents
 );
 
 export default router;

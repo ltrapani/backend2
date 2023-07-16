@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-6">
+      <div class="card mt-3">
+        <div class="card-header">
+          <h3>Documents</h3>
+          {{#each documents}}
+            <div class="mb-3">
+              <label
+                for={{this.name}}
+                class="form-label text-uppercase"
+              >{{this.name}}
+                <strong class={{this.style}}>
+                  {{this.status}}
+                </strong>
+              </label>
+              <input class="form-control" type="file" id={{this.name}} />
+            </div>
+          {{/each}}
+          <button
+            class="btn btn-info"
+            onclick="uploadFiles('{{user._id}}')"
+          >Upload files</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/documents.js"></script>

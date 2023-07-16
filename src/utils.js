@@ -6,6 +6,9 @@ import passport from "passport";
 import nodemailer from "nodemailer";
 import config from "./config/config.js";
 import UsersDto from "./dao/DTOs/users.dto.js";
+import multer from "multer";
+import logger from "./logger/logger.js";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -60,3 +63,64 @@ export const transporter = nodemailer.createTransport({
     pass: config.gmail_pass,
   },
 });
+
+export const storageDocuments = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const { uid } = req.params;
+    const { storage, pid } = req.query;
+
+    let path;
+
+    if (storage === "documents") {
+      path = `${__dirname}/public/documents/${uid}/`;
+      if (!fs.existsSync(path)) {
+        fs.mkdirSync(path);
+      }
+
+      return cb(null, path);
+    }
+
+    if (storage === "profile") {
+      path = `${__dirname}/public/profiles`;
+      return cb(null, path);
+    }
+
+    if (storage === "products" && pid) {
+      path = `${__dirname}/public/products/${pid}`;
+      if (!fs.existsSync(path)) {
+        fs.mkdirSync(path);
+      }
+
+      return cb(null, path);
+    }
+
+    if (storage === "products" && !pid) {
+      return cb({ status: "error", message: "Error, you do not send pid" });
+    }
+    return cb({ status: "error", message: "Error, no query params" });
+  },
+  filename: (req, file, cb) => {
+    const { storage, pid } = req.query;
+
+    const extension = file.mimetype.split("/")[1];
+    let fileName = `${req.user._id}-${file.fieldname}.${extension}`;
+
+    if (storage === "products" && pid) {
+      fileName = `${pid}-${Date.now()}.${extension}`;
+    }
+
+    cb(null, fileName);
+  },
+});
+
+export const uploader = (storage) =>
+  multer({
+    storage,
+    onError: (err, next) => {
+      if (err) {
+        logger.error(err.message);
+        next(err);
+      }
+      next();
+    },
+  });

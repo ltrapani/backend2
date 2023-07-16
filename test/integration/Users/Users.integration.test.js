@@ -33,9 +33,9 @@ describe("Testing Users endpoint", () => {
 
   it("Testing register a user", async () => {
     const userMock = {
-      first_name: "Lucas",
-      last_name: "Trapani",
-      email: "lucas@gmail.com",
+      first_name: "Lisa",
+      last_name: "Godoy",
+      email: "lisa@gmail.com",
       age: 6,
       password: "123",
     };
@@ -53,7 +53,7 @@ describe("Testing Users endpoint", () => {
 
   it("Testing login user and storage a cookie", async () => {
     const credentialsMock = {
-      email: "lucas@gmail.com",
+      email: "lisa@gmail.com",
       password: "123",
     };
 
@@ -80,6 +80,6 @@ describe("Testing Users endpoint", () => {
       .set("Cookie", [`${cookie.name}=${cookie.value}`]);
 
     expect(statusCode).to.be.eql(200);
-    expect(_body.user.email).to.be.eql("lucas@gmail.com");
+    expect(_body.user.email).to.be.eql("lisa@gmail.com");
   });
 });

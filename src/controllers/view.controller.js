@@ -113,8 +113,38 @@ export const login = async (req, res) => {
 
 export const profile = async (req, res) => {
   try {
+    const user = await usersService.getUserByEmail(req.user.email);
+    req.user.profile = user.profile;
+
     res.render("profile", {
       user: req.user,
+    });
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).send(error);
+  }
+};
+
+export const documents = async (req, res) => {
+  try {
+    const user = await usersService.getUserByEmail(req.user.email);
+    req.user.documents = user.documents;
+    const docs = ["identification", "address", "statusCount"];
+    const documents = docs.map((item) => {
+      if (user.documents.some((doc) => doc.name === item)) {
+        return {
+          name: item,
+          status: "File Uploaded - You can update it",
+          style: "text-success",
+        };
+      } else {
+        return { name: item, status: "Pending", style: "text-warning" };
+      }
+    });
+
+    res.render("documents", {
+      user: req.user,
+      documents,
     });
   } catch (error) {
     logger.error(error.message);
