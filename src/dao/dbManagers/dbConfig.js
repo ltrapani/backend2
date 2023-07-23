@@ -8,5 +8,5 @@ try {
   await mongoose.connect(URI);
   logger.info("Connected to Atlas mongoDB");
 } catch (error) {
-  logger.error(error);
+  logger.error(error.message);
 }

@@ -41,10 +41,10 @@ router.get(
 );
 
 router.get(
-  "/update-role",
+  "/users",
   passportCall("jwt"),
   authorization("admin"),
-  viewController.updateRole
+  viewController.users
 );
 
 router.get(

@@ -1,13 +1,13 @@
 <div class="container">
-  <h1>Cart</h1>
+  <h1>My Cart</h1>
   <div class="row">
     <div class="col-12">
-      <div>
-        <table class="table">
+      <div class="table-responsive">
+        <table class="table ">
           <thead>
             <tr>
+              <th></th>
               <th scope="col">Title</th>
-              <th scope="col">Category</th>
               <th scope="col">Quantity</th>
               <th scope="col">Price</th>
               <th></th>
@@ -16,11 +16,22 @@
           <tbody>
             {{#each products}}
               <tr>
+                <td>
+                  {{#if this.product.thumbnail}}
+                    <img src="{{this.product.thumbnail.[0]}}" class="img-cart border rounded-3" alt="">
+                  {{else}}
+                    <img
+                      class="img-cart border rounded-3"
+                      src="/images/no-images.jpg"
+                      class="card-img-top"
+                      alt="..."
+                    />
+                  {{/if}}
+                </td>
                 <td>{{this.product.title}}</td>
-                <td>{{this.product.category}}</td>
                 <td>{{this.quantity}}</td>
                 <td>${{this.product.price}}</td>
-                <td>
+                <td class="text-center">
                   <button
                     class="btn btn-danger"
                     onclick="(()=> removeItem('{{../_id}}','{{this.product._id}}'))()"
@@ -32,25 +43,26 @@
           {{#if total}}
            <tfoot>
             <tr>
-              <td colspan="3">TOTAL</td>
-              <td>${{total}}</td>
+              <td class="fw-bold" colspan="3">TOTAL</td>
+              <td class="fw-bold">${{total}}</td>
+              <td></td>
             </tr>
            </tfoot>
           {{/if}}
         </table>
       </div>
     </div>
-    <div class="col-12">
+    <div class="col-12 d-flex justify-content-between">
        {{#if products}}
-      <button 
-       onclick="(()=> emptyCart('{{_id}}'))()"
-      class="btn btn-danger me-2">Empty Cart</button>
       <button
         onclick="(()=> checkout('{{_id}}'))()"
         class="btn btn-success"
       >
         Checkout
       </button>
+      <button 
+       onclick="(()=> emptyCart('{{_id}}'))()"
+      class="btn btn-danger me-2">Empty Cart</button>
         {{/if}}
     </div>
   </div>

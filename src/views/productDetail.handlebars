@@ -1,52 +1,52 @@
-<div class="container">
-  <h1>Product Detail</h1>
-  <div class="row">
-    <div class="col-12">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Description</th>
-            <th scope="col">Code</th>
-            <th scope="col">Price</th>
-            <th scope="col">Status</th>
-            <th scope="col">Stock</th>
-            <th scope="col">Category</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{title}}</td>
-            <td>{{description}}</td>
-            <td>{{code}}</td>
-            <td>${{price}}</td>
-            <td>{{status}}</td>
-            <td>{{stock}}</td>
-            <td>{{category}}</td>
-            <td>
-              {{#if user.isUser}}
-                <button
-                  class="btn btn-success"
-                  onclick="addToCart('{{user.cart}}','{{_id}}')"
-                >Add To Cart</button>
-              {{/if}}
-              {{#if user.isPremium}}
-                <button
-                  class="btn btn-success"
-                  onclick="addToCart('{{user.cart}}','{{_id}}')"
-                >Add to Cart</button>
-              {{/if}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="col-12">
-        <h2>Images</h2>
-        {{#each thumbnail}}
-          <img class="product-img" src={{this}} alt="" />
-        {{/each}}
+<div class="container py-3">
+  <h1>{{title}}</h1>
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-4">
+      <ul class="list-group">
+        <li class="list-group-item"><span class="fw-bold">DESCRIPTION:</span>
+          {{description}}</li>
+        <li class="list-group-item"><span class="fw-bold">CODE:</span>
+          {{code}}</li>
+        <li class="list-group-item"><span class="fw-bold">PRICE:</span>
+          ${{price}}</li>
+        <li class="list-group-item"><span class="fw-bold">STOCK:</span>
+          {{stock}}</li>
+        <li class="list-group-item"><span class="fw-bold">CATEGORY:</span>
+          {{category}}</li>
+      </ul>
+      {{#if user.isUser}}
+        <button
+          class="btn btn-outline-success w-100 mt-3 mb-4"
+          onclick="addToCart('{{user.cart}}','{{this._id}}')"
+        >Add to cart</button>
+      {{/if}}
+      {{#if user.isPremium}}
+        <button
+          class="btn btn-outline-success w-100 mt-3 mb-4"
+          onclick="addToCart('{{user.cart}}','{{this._id}}')"
+        >Add to cart</button>
+      {{/if}}
+    </div>
+    <div class="col-12 col-lg-8">
+      <div class="row justify-content-center">
+        {{#if thumbnail}}
+          {{#each thumbnail}}
+            <div class="col-12 col-lg-4 mb-3">
+              <img class="product-img border rounded-3" src="{{this}}" alt="" />
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="col-12 col-lg-6 mb-3">
+            <img
+              class="product-img border rounded-3"
+              src="/images/no-images.jpg"
+              class="card-img-top"
+              alt="..."
+            />
+          </div>
+        {{/if}}
       </div>
     </div>
+
   </div>
 </div>

@@ -16,7 +16,7 @@ export const createCart = async (req, res) => {
 
     res.send({ status: "success", message: "Cart created", response });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send({ error });
   }
 };
@@ -35,7 +35,7 @@ export const getCart = async (req, res) => {
 
     res.send({ status: "success", cart });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send({ error });
   }
 };
@@ -77,7 +77,7 @@ export const addProduct = async (req, res, next) => {
 
     res.send({ status: "success", message: "Product added.", response });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     next(error);
   }
 };
@@ -100,7 +100,7 @@ export const updateCart = async (req, res) => {
 
     res.send({ status: "success", message: "Cart updated", response });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send({ error });
   }
 };
@@ -133,7 +133,7 @@ export const updateQuantity = async (req, res) => {
 
     res.send({ status: "success", message: "Cart updated", response });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send({ error });
   }
 };
@@ -160,7 +160,7 @@ export const deleteProduct = async (req, res) => {
 
     res.send({ status: "success", message: "Product was deleted.", response });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send({ error });
   }
 };
@@ -212,21 +212,20 @@ export const purchase = async (req, res) => {
         .status(403)
         .send({ status: "error", message: "You don't have permissions" });
 
-    const result = await cartsService.purchase(cart, req.user.email);
-    if (result.products.length === 0)
+    const result = await cartsService.purchase(cart, req.user);
+    if (result.products.length === cart.products.length)
       return res.send({
         status: "success",
         message: `Purchase success. We send you an email`,
         result,
       });
 
-    if (result?.ticket) {
+    if (result.products.length > 0)
       return res.send({
         status: "success",
         message: `Purchase success. We send you an email. There is not enough stock of some products. Which were left in the cart. `,
         result,
       });
-    }
 
     res.send({
       status: "error",
@@ -234,7 +233,7 @@ export const purchase = async (req, res) => {
       result,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).send({ error });
   }
 };

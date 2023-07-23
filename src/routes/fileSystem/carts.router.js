@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
       ? res.send({ status: "success", message: "cart created" })
       : res.status(400).send({ status: "error", message: response.error });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 
@@ -53,7 +53,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
       ? res.send({ status: "success", message: "Product added." })
       : res.status(400).send({ status: "error", message: response.error });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 

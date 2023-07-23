@@ -1,0 +1,51 @@
+<div class="container mt-3">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-6 col-lg-8">
+      <h1>List Users</h1>
+      <div class="col mb-4">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
+                <th scope="col">Last Connection</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="listUsers">
+            </tbody>
+          </table>
+        </div>
+        <button
+          class="btn btn-outline-danger"
+          onclick="deleteInactiveUsers()"
+        >Delete Inactive Users</button>
+      </div>
+      <div class="col">
+
+        <h2>Update Role</h2>
+        <form id="updateRoleForm">
+          <select id="selectUser" required class="form-select mb-3">
+            <option value="">Select User</option>
+          </select>
+          <select id="role" class="form-select mb-3" required>
+            <option value="">Select a role</option>
+            <option value="user">User</option>
+            <option value="premium">Premium</option>
+          </select>
+          <button class="btn btn-outline-primary">Update Role</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"
+  integrity="sha512-42PE0rd+wZ2hNXftlM78BSehIGzezNeQuzihiBCvUEB3CVxHvsShF86wBWwQORNxNINlBPuq7rG4WWhNiTVHFg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="/js/users.js"></script>

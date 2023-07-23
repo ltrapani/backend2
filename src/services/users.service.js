@@ -7,7 +7,7 @@ import { isAdmin } from "../lib/validators/validator.js";
 import { createHash, generateToken, validatePassword } from "../utils.js";
 import { sendEmail } from "./email.service.js";
 import config from "../config/config.js";
-import { resetPasswordHtml } from "../utils/htmlTemplates.js";
+import { resetPasswordHtml, userInactive } from "../utils/htmlTemplates.js";
 import * as productsService from "../services/products.service.js";
 
 const cartRepository = new CartsRepository(cartsManager);
@@ -116,6 +116,22 @@ export const getUsers = async () => {
 };
 
 export const deleteUser = async (uid) => await userRepository.delete(uid);
+
+export const deleteInactiveUsers = async () => {
+  const users = await getUsers();
+  const now = new moment();
+  let inactiveUsersCount = 0;
+
+  for (const user of users) {
+    const diff = now.diff(user.last_connection, "minutes");
+    if (diff > config.minutes_inactives_users) {
+      await userRepository.delete(user._id);
+      await sendEmail(user.email, "INACTIVITY", userInactive(user));
+      inactiveUsersCount++;
+    }
+  }
+  return inactiveUsersCount;
+};
 
 export const saveDocuments = async (user, files) => {
   const docs = ["identification", "address", "statusCount"];

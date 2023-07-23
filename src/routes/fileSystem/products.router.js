@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 
     if (limit > 0) return res.send(products.slice(0, limit));
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 
@@ -45,7 +45,7 @@ router.get("/:pid", async (req, res) => {
       .status(404)
       .send({ status: "error", Error: "El producto no existe!!!" });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 
@@ -63,7 +63,7 @@ router.post("/", async (req, res) => {
 
     res.send({ status: "success", message: "Product added" });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 
@@ -80,7 +80,7 @@ router.put("/:pid", async (req, res) => {
           message: response.error,
         });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 
@@ -99,7 +99,7 @@ router.delete("/:pid", async (req, res) => {
       message: response.error,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 

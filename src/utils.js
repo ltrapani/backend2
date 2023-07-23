@@ -23,9 +23,10 @@ export const passportCall = (strategy) => {
       if (err) return next(err);
 
       if (!user) {
-        return res
-          .status(401)
-          .send({ error: info.messages ? info.messages : info.toString() });
+        return res.status(401).render("login", {
+          status: "error",
+          messages: info.messages ? info.messages : info.toString(),
+        });
       }
 
       req.user = new UsersDto(user);

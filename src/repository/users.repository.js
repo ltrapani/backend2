@@ -5,7 +5,11 @@ export default class UsersRepository {
     this.dao = dao;
   }
 
-  getUsers = async () => await this.dao.getUsers();
+  getUsers = async () => {
+    const users = await this.dao.getUsers();
+
+    return users.map((user) => new UsersDto(user));
+  };
 
   create = async (user) => await this.dao.create(user);
 

@@ -3,7 +3,7 @@ import supertest from "supertest";
 import config from "../../../src/config/config.js";
 
 const expect = chai.expect;
-const requester = supertest("http://localhost:8080");
+const requester = supertest(`${config.host_url}`);
 
 describe("Testing Products endpoint", () => {
   let cookie;

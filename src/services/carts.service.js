@@ -54,12 +54,15 @@ export const deleteProduct = async (cart, product) =>
 export const deleteAllProducts = async (cart) =>
   await cartRepository.deleteAllProducts(cart._id);
 
-export const purchase = async (cart, email) => {
+export const purchase = async (cart, user) => {
   const ticket = {
     code: nanoid(20),
     amount: 0,
-    purchaser: email,
+    purchaser: user.email,
   };
+
+  const cartRest = { ...cart };
+  const cartSuccess = { ...cart, products: [] };
 
   for (let productCart of cart.products) {
     const pid = productCart.product._id.toString();
@@ -70,20 +73,22 @@ export const purchase = async (cart, email) => {
       productDB.stock = productDB.stock - quantity;
       await productsService.updateProductCheckout(pid, productDB);
 
-      cart.products = cart.products.filter(
+      cartRest.products = cartRest.products.filter(
         (p) => p.product._id.toString() !== pid
       );
 
-      await updateCart(cart._id, cart);
+      cartSuccess.products.push(productCart);
     }
   }
 
-  if (ticket.amount) {
-    cart.ticket = await ticketsService.createTicket(ticket);
+  if (cartSuccess.products.length) {
+    cartSuccess.ticket = await ticketsService.createTicket(ticket);
 
-    const html = purchaseHtml(cart.ticket.code);
-    await sendEmail(email, "Web purchase", html);
+    const html = purchaseHtml(user, cartSuccess);
+    await sendEmail(user.email, "Web purchase", html);
+
+    await updateCart(cart._id, cartRest);
   }
 
-  return cart;
+  return cartSuccess;
 };

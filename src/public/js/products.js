@@ -1,13 +1,10 @@
 const addToCart = async (cid, pid) => {
-  const data = await fetch(
-    `http://localhost:8080/api/carts/${cid}/product/${pid}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    }
-  );
+  const data = await fetch(`/api/carts/${cid}/product/${pid}`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
 
   const response = await data.json();
   if (response.status === "success") {

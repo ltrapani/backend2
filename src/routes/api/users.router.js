@@ -61,6 +61,13 @@ router.delete(
   usersController.deleteUser
 );
 
+router.delete(
+  "/",
+  passportCall("jwt"),
+  authorization("admin"),
+  usersController.deleteInactiveUsers
+);
+
 router.post(
   "/:uid/documents",
   passportCall("jwt"),

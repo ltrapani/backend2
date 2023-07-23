@@ -19,7 +19,7 @@ export default class CartService {
       await writeInfo(carts, this.path);
       return { status: "success" };
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
       return { status: "error", error: error.message };
     }
   };
@@ -30,7 +30,7 @@ export default class CartService {
       const carts = JSON.parse(data);
       return carts.find((c) => c._id === Number(cid));
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
     }
   };
 
@@ -53,7 +53,7 @@ export default class CartService {
       await writeInfo(newCarts, this.path);
       return { status: "success" };
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
     }
   };
 }

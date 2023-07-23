@@ -18,7 +18,7 @@ export const getAbsolutePath = async (relativePath) => {
       await fs.promises.writeFile(absolutePath, JSON.stringify([]));
     return absolutePath;
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 };
 
@@ -26,7 +26,7 @@ export const writeInfo = async (data, path) => {
   try {
     return await fs.promises.writeFile(path, JSON.stringify(data, null, "\t"));
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 };
 
@@ -34,6 +34,6 @@ export const readInfo = async (path) => {
   try {
     return await fs.promises.readFile(path, "utf-8");
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 };

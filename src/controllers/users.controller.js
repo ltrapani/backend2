@@ -227,6 +227,26 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+export const deleteInactiveUsers = async (req, res) => {
+  try {
+    const result = await userService.deleteInactiveUsers();
+    if (!result)
+      return res.send({
+        status: "success",
+        message: "There are no users inactive",
+      });
+
+    res.send({
+      status: "success",
+      message: `${result} inactive users were deleted.`,
+      result,
+    });
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).send(error);
+  }
+};
+
 export const documents = async (req, res) => {
   try {
     const { storage, pid } = req.query;

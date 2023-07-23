@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
     const products = await productService.getProducts();
     res.render("home", { products });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 
@@ -22,7 +22,7 @@ router.get("/realtimeproducts", async (req, res) => {
     const products = await productService.getProducts();
     res.render("realTimeProducts", { products });
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 });
 

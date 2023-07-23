@@ -177,9 +177,9 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-export const updateRole = async (req, res) => {
+export const users = async (req, res) => {
   try {
-    res.render("updateRole", {
+    res.render("users", {
       user: req.user,
     });
   } catch (error) {
